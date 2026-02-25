@@ -10,7 +10,7 @@ struct Jugador {
     int oro = 0;
     float bonificacion = 0.0;
 };
-0
+
 bool iniciarCombate(Jugador & jugador) {
     float probabilidad = (1.0 / 3.0) + jugador.bonificacion;
 
