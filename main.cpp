@@ -1,20 +1,122 @@
-// Archivos-Aventuras-Roger-Abril.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
+
+//Define for the player
+#define Player 'P'
+
+std::vector<std::vector<char>> map;
+std::string line;
+char input;
+bool Continue = true;
+
+struct Coordinates {
+	int y;
+	int x;
+};
+
+Coordinates player;
+
+//Reads the map from the file (mapa.txt) and prints it into the vector (found above)
+void mapPrinting() {
+	std::ifstream getmaps;
+	getmaps.open("mapa.txt");
+	if (!getmaps.is_open()) {
+		std::cout << "File could not be opened";
+	}
+	else {
+		char spots;
+		while (std::getline(getmaps, line)) {
+			map.push_back(std::vector<char>(line.begin(), line.end()));
+		}
+	}
+}
+
+//Saves the map after each iteration of the game loop (aka each time the player moves)
+void mapSave() {
+	std::ofstream getmaps;
+	getmaps.open("mapa.txt");
+	if (!getmaps.is_open()) {
+		std::cout << "File could not be opened";
+	}
+	else {
+		for (size_t i = 0; i < map.size(); i++)
+		{
+			for (size_t j = 0; j < map[i].size(); j++)
+			{
+				getmaps << map[i][j];
+			}
+			getmaps << "\n";
+		}
+	}
+	getmaps.close();
+	std::cout << "Map data succesfuly saved! \n";
+}
+
+//Prints the map at the console at the beggining of the game
+void roundStart() {
+	for (size_t i = 0; i < map.size(); i++)
+	{
+		for (size_t j = 0; j < map[i].size(); j++)
+		{
+			std::cout << map[i][j];
+		}
+		std::cout << std::endl;
+	}
+}
+
+//Handle's the players input and what happens after (aka. if they can move or not, where they land, etc.)
+void playerInput() {
+	std::cin >> input;
+	switch (input) {
+	case 'W':
+		if (map[player.y - 1][player.x] != '#') {
+			map[player.y][player.x] = ' ';
+			player.y -= 1;
+		}
+		break;
+	case 'A':
+		if (map[player.y][player.x - 1] != '#') {
+			map[player.y][player.x] = ' ';
+			player.x -= 1;
+		}
+		break;
+	case 'S':
+		if (map[player.y + 1][player.x] != '#') {
+			map[player.y][player.x] = ' ';
+			player.y += 1;
+		}
+		break;
+	case 'D':
+		if (map[player.y][player.x + 1] != '#') {
+			map[player.y][player.x] = ' ';
+			player.x += 1;
+		}
+		break;
+		map[player.y][player.x] = Player;
+	}
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	mapPrinting();
+	//Sets the BASE player coordinate, this is important since we dont know where the player will be when they start the game
+	for (int i = 0; i < map.size(); i++)
+	{
+		for (int j = 0; j < map[i].size(); j++)
+		{
+			if (map[i][j] == Player) {
+				player = { i , j };
+			}
+		}
+	}
+
+	//GameLoop (lacks win condition for now)
+	do {
+		roundStart();
+		playerInput();
+		mapSave();
+	} while (true);
+
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
