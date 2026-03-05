@@ -98,6 +98,23 @@ void playerInput() {
 	}
 }
 
+void spaceCheck(int coordX, int coordY, std::vector<std::vector<char>> map) {
+	switch (map[coordY][coordX]){
+		//checks for objects
+	case 'C':
+		//fucking whatever man idk we havent declared the objects yet
+		//the items would be added here
+		break;
+		//checks for enemies
+	case 'E':
+		//the battle system, it should probably go with a (float) probability check function that assigns each object a probability and then adds it all up
+		//makes a random number, check if its superior to the number of the probability, and assign win or loss (win: number < probability). Include reduce health on this and increase gold on win
+		break;
+	case '.':
+		return;
+	}
+}
+
 int main()
 {
 	mapPrinting();
