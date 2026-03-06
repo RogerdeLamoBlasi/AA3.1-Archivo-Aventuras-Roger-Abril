@@ -1,0 +1,4 @@
+espada 0.15
+escudo 0.10
+anillo 0.20
+armadura 0.12
