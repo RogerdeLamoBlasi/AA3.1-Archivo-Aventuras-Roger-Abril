@@ -54,3 +54,26 @@ void abrirCofre(Jugador& jugador) {
     std::cout << "Bonificacion de combate +" << bonusItem * 100 << "%\n";
     system("pause");
 }
+
+//funcion de guardado de items
+void guardarItems(Jugador& jugador) {
+    std::ofstream inventario;
+    inventario.open("inventario.txt");
+    inventario << jugador.bonificacion << std::endl << jugador.oro;
+    inventario.close();
+}
+
+void jugadorItems(Jugador& jugador) {
+    std::ifstream inventario;
+    inventario.open("inventario.txt");
+    
+    int oro;
+    float porcentaje;
+
+    if (inventario >> porcentaje >> oro) {
+        jugador.bonificacion = porcentaje;
+        jugador.oro = oro;
+    }
+
+    inventario.close();
+}

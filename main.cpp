@@ -47,6 +47,8 @@ void cargarMapa() {
         }
     }
     archivo.close();
+
+    jugadorItems(jugador);
 }
 
 // Guardar el mapa actualizado en el archivo de texto después de cada movimiento del jugador.
@@ -69,10 +71,14 @@ void guardarMapa() {
         }
         archivo.close();
     }
+
+    guardarItems(jugador);
 }
 
 // Mostrar el mapa en la consola para que el jugador pueda ver su posición y el entorno.
 void mostrarMapa() {
+
+    std::cout << "Ahora mismo tienes: " << jugador.oro << " monedas de oro\n";
     for (size_t i = 0; i < mapa.size(); i++)
     {
         for (size_t j = 0; j < mapa[i].size(); j++)
