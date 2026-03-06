@@ -46,8 +46,6 @@ bool quedanEnemigos(const std::vector<std::vector<char>>& mapa) {
 // Comprueba si el jugador ha entrado en contacto con un enemigo. Si es así, inicia el combate y actualiza el mapa.
 void comprobarEnemigo(std::vector<std::vector<char>>& mapa, Jugador& jugador) {
 
-    if (mapa[jugador.y][jugador.x] == 'E') {
-
         bool victoria = iniciarCombate(jugador);
 
         if (victoria) {
@@ -63,5 +61,4 @@ void comprobarEnemigo(std::vector<std::vector<char>>& mapa, Jugador& jugador) {
             std::cout << "¡HAS GANADO LA PARTIDA!\n";
             exit(0);
         }
-    }
 }
