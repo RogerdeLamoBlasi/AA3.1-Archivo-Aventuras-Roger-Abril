@@ -35,7 +35,7 @@ void abrirCofre(Jugador& jugador) {
     jugador.oro += oroGanado;
 
     std::cout << "Has conseguido " << oroGanado << " de oro.\n";
-
+    
     std::vector<std::pair<std::string, float>> items = cargarItems();
 
     if (items.empty()) {
@@ -52,4 +52,5 @@ void abrirCofre(Jugador& jugador) {
 
     std::cout << "Has conseguido el objeto: " << nombreItem << "\n";
     std::cout << "Bonificacion de combate +" << bonusItem * 100 << "%\n";
+    system("pause");
 }

@@ -13,16 +13,15 @@
 std::vector<std::vector<char>> mapa;
 std::string linea;
 char entrada;
+bool choice;
 
 Jugador jugador;
-
-// Cargar el mapa desde un archivo de texto.
-void cargarMapa() {
-
-    std::ifstream archivo("mapa.txt");
+void baseMapa() {
+    std::ifstream archivo("mapaBase.txt");
 
     if (!archivo.is_open()) {
         std::cout << "No se pudo abrir el archivo\n";
+        exit(0);
     }
     else {
 
@@ -30,27 +29,50 @@ void cargarMapa() {
             mapa.push_back(std::vector<char>(linea.begin(), linea.end()));
         }
     }
+    archivo.close();
+}
+// Cargar el mapa desde un archivo de texto.
+void cargarMapa() {
+
+    std::ifstream archivo("mapa.txt");
+
+    if (!archivo.is_open()) {
+        std::cout << "No se pudo abrir el archivo\n";
+        exit(0);
+    }
+    else {
+
+        while (getline(archivo, linea)) {
+            mapa.push_back(std::vector<char>(linea.begin(), linea.end()));
+        }
+    }
+    archivo.close();
 }
 
 // Guardar el mapa actualizado en el archivo de texto después de cada movimiento del jugador.
 void guardarMapa() {
 
     std::ofstream archivo("mapa.txt");
-
-    for (size_t i = 0; i < mapa.size(); i++)
-    {
-        for (size_t j = 0; j < mapa[i].size(); j++)
+    if (!archivo.is_open()) {
+        std::cout << "No se pudo abrir el archivo\n";
+        exit(0);
+    }
+    else {
+        for (size_t i = 0; i < mapa.size(); i++)
         {
-            archivo << mapa[i][j];
-        }
+            for (size_t j = 0; j < mapa[i].size(); j++)
+            {
+                archivo << mapa[i][j];
+            }
 
-        archivo << "\n";
+            archivo << "\n";
+        }
+        archivo.close();
     }
 }
 
 // Mostrar el mapa en la consola para que el jugador pueda ver su posición y el entorno.
 void mostrarMapa() {
-
     for (size_t i = 0; i < mapa.size(); i++)
     {
         for (size_t j = 0; j < mapa[i].size(); j++)
@@ -64,7 +86,15 @@ void mostrarMapa() {
 
 int main()
 {
-    cargarMapa();
+    std::cout << "bienvenido a archivos y aventuras, quieres cargar la partida o jugar una nueva? (0 / 1) ";
+    std::cin >> choice;
+
+    if (choice) {
+        baseMapa();
+    }
+    if (!choice) {
+        cargarMapa();
+    }
 
 	// Buscar la posición inicial del jugador en el mapa y almacenarla en la estructura Jugador.
     for (int i = 0; i < mapa.size(); i++)
@@ -89,5 +119,6 @@ int main()
         jugador.moverJugador(entrada, mapa);
 
         guardarMapa();
+        system("cls");
     }
 }

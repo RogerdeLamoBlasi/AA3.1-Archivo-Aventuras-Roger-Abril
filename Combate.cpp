@@ -11,21 +11,25 @@ bool iniciarCombate(Jugador& jugador) {
     if (probabilidad > 0.9)
         probabilidad = 0.9;
 
-    float tirada = (float)rand() / RAND_MAX;
+    float tirada = rand() % 100;
+    tirada /= 100;
 
     std::cout << "\nCOMBATE\n";
     std::cout << "Probabilidad de victoria: " << probabilidad * 100 << "%\n";
-
+    system("pause");
     if (tirada <= probabilidad) {
-        std::cout << "¡Has ganado el combate!\n";
+        std::cout << "Has ganado el combate! Presiona cualquier tecla para continuar.\n";
+        system("pause");
+        tirada = 0;
         return true;
     }
     else {
         jugador.vidas--;
 
-        std::cout << "Has perdido el combate. Vidas restantes: "
+        std::cout << "Has perdido el combate. Presiona cualquier tecla para continuar. Vidas restantes: "
             << jugador.vidas << "\n";
-
+        system("pause");
+        tirada = 0;
         return false;
     }
 }
