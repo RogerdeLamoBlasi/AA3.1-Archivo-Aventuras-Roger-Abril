@@ -1,17 +1,11 @@
+#include "combate.h"
 #include <iostream>
-#include <vector>
-#include <string>
 #include <ctime>
+#include <cstdlib>
 
-struct Jugador {
-    int x;
-    int y;
-    int vidas = 3;
-    int oro = 0;
-    float bonificacion = 0.0;
-};
+// Combate entre el jugador y un enemigo. La probabilidad de victoria se basa en una fórmula que incluye una bonificación del jugador.
+bool iniciarCombate(Jugador& jugador) {
 
-bool iniciarCombate(Jugador & jugador) {
     float probabilidad = (1.0 / 3.0) + jugador.bonificacion;
 
     if (probabilidad > 0.9)
@@ -28,23 +22,30 @@ bool iniciarCombate(Jugador & jugador) {
     }
     else {
         jugador.vidas--;
-        std::cout << "Has perdido el combate vaya BOT. Vidas restantes: "
+
+        std::cout << "Has perdido el combate. Vidas restantes: "
             << jugador.vidas << "\n";
+
         return false;
     }
 }
 
-bool quedanEnemigos(const std::vector<std::string>& mapa) {
+// Comprueba si quedan enemigos en el mapa. Si no quedan, el jugador gana la partida.
+bool quedanEnemigos(const std::vector<std::vector<char>>& mapa) {
+
     for (const auto& fila : mapa) {
         for (char c : fila) {
             if (c == 'E')
                 return true;
         }
     }
+
     return false;
 }
 
-void comprobarEnemigo(std::vector<std::string>& mapa, Jugador& jugador) {
+// Comprueba si el jugador ha entrado en contacto con un enemigo. Si es así, inicia el combate y actualiza el mapa.
+void comprobarEnemigo(std::vector<std::vector<char>>& mapa, Jugador& jugador) {
+
     if (mapa[jugador.y][jugador.x] == 'E') {
 
         bool victoria = iniciarCombate(jugador);
@@ -54,12 +55,12 @@ void comprobarEnemigo(std::vector<std::string>& mapa, Jugador& jugador) {
         }
 
         if (jugador.vidas <= 0) {
-            std::cout << "GAME OVER BOT\n";
+            std::cout << "GAME OVER\n";
             exit(0);
         }
 
         if (!quedanEnemigos(mapa)) {
-            std::cout << "¡HAS GANADO LA PARTIDA! HELL YEAHHHHHHHH\n";
+            std::cout << "¡HAS GANADO LA PARTIDA!\n";
             exit(0);
         }
     }

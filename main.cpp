@@ -3,137 +3,91 @@
 #include <vector>
 #include <string>
 
-//Define for the player
-#define Player 'P'
+#include "Jugador.h"
+#include "cofres.h"
+#include "combate.h"
 
-std::vector<std::vector<char>> map;
-std::string line;
-char input;
-bool Continue = true;
+#define PLAYER 'P'
 
-struct Coordinates {
-	int y;
-	int x;
-};
+// El mapa se representa como un vector de vectores de caracteres, donde cada carácter representa un tipo de casilla.
+std::vector<std::vector<char>> mapa;
+std::string linea;
+char entrada;
 
-Coordinates player;
+Jugador jugador;
 
-//Reads the map from the file (mapa.txt) and prints it into the vector (found above)
-void mapPrinting() {
-	std::ifstream getmaps;
-	getmaps.open("mapa.txt");
-	if (!getmaps.is_open()) {
-		std::cout << "File could not be opened";
-	}
-	else {
-		char spots;
-		while (std::getline(getmaps, line)) {
-			map.push_back(std::vector<char>(line.begin(), line.end()));
-		}
-	}
+// Cargar el mapa desde un archivo de texto.
+void cargarMapa() {
+
+    std::ifstream archivo("mapa.txt");
+
+    if (!archivo.is_open()) {
+        std::cout << "No se pudo abrir el archivo\n";
+    }
+    else {
+
+        while (getline(archivo, linea)) {
+            mapa.push_back(std::vector<char>(linea.begin(), linea.end()));
+        }
+    }
 }
 
-//Saves the map after each iteration of the game loop (aka each time the player moves)
-void mapSave() {
-	std::ofstream getmaps;
-	getmaps.open("mapa.txt");
-	if (!getmaps.is_open()) {
-		std::cout << "File could not be opened";
-	}
-	else {
-		for (size_t i = 0; i < map.size(); i++)
-		{
-			for (size_t j = 0; j < map[i].size(); j++)
-			{
-				getmaps << map[i][j];
-			}
-			getmaps << "\n";
-		}
-	}
-	getmaps.close();
-	std::cout << "Map data succesfuly saved! \n";
+// Guardar el mapa actualizado en el archivo de texto después de cada movimiento del jugador.
+void guardarMapa() {
+
+    std::ofstream archivo("mapa.txt");
+
+    for (size_t i = 0; i < mapa.size(); i++)
+    {
+        for (size_t j = 0; j < mapa[i].size(); j++)
+        {
+            archivo << mapa[i][j];
+        }
+
+        archivo << "\n";
+    }
 }
 
-//Prints the map at the console at the beggining of the game
-void roundStart() {
-	for (size_t i = 0; i < map.size(); i++)
-	{
-		for (size_t j = 0; j < map[i].size(); j++)
-		{
-			std::cout << map[i][j];
-		}
-		std::cout << std::endl;
-	}
-}
+// Mostrar el mapa en la consola para que el jugador pueda ver su posición y el entorno.
+void mostrarMapa() {
 
-//Handle's the players input and what happens after (aka. if they can move or not, where they land, etc.)
-void playerInput() {
-	std::cin >> input;
-	switch (input) {
-	case 'W':
-		if (map[player.y - 1][player.x] != '#') {
-			map[player.y][player.x] = ' ';
-			player.y -= 1;
-		}
-		break;
-	case 'A':
-		if (map[player.y][player.x - 1] != '#') {
-			map[player.y][player.x] = ' ';
-			player.x -= 1;
-		}
-		break;
-	case 'S':
-		if (map[player.y + 1][player.x] != '#') {
-			map[player.y][player.x] = ' ';
-			player.y += 1;
-		}
-		break;
-	case 'D':
-		if (map[player.y][player.x + 1] != '#') {
-			map[player.y][player.x] = ' ';
-			player.x += 1;
-		}
-		break;
-		map[player.y][player.x] = Player;
-	}
-}
+    for (size_t i = 0; i < mapa.size(); i++)
+    {
+        for (size_t j = 0; j < mapa[i].size(); j++)
+        {
+            std::cout << mapa[i][j];
+        }
 
-void spaceCheck(int coordX, int coordY, std::vector<std::vector<char>> map) {
-	switch (map[coordY][coordX]){
-		//checks for objects
-	case 'C':
-		//fucking whatever man idk we havent declared the objects yet
-		//the items would be added here
-		break;
-		//checks for enemies
-	case 'E':
-		//the battle system, it should probably go with a (float) probability check function that assigns each object a probability and then adds it all up
-		//makes a random number, check if its superior to the number of the probability, and assign win or loss (win: number < probability). Include reduce health on this and increase gold on win
-		break;
-	case '.':
-		return;
-	}
+        std::cout << std::endl;
+    }
 }
 
 int main()
 {
-	mapPrinting();
-	//Sets the BASE player coordinate, this is important since we dont know where the player will be when they start the game
-	for (int i = 0; i < map.size(); i++)
-	{
-		for (int j = 0; j < map[i].size(); j++)
-		{
-			if (map[i][j] == Player) {
-				player = { i , j };
-			}
-		}
-	}
+    cargarMapa();
 
-	//GameLoop (lacks win condition for now)
-	do {
-		roundStart();
-		playerInput();
-		mapSave();
-	} while (true);
+	// Buscar la posición inicial del jugador en el mapa y almacenarla en la estructura Jugador.
+    for (int i = 0; i < mapa.size(); i++)
+    {
+        for (int j = 0; j < mapa[i].size(); j++)
+        {
+            if (mapa[i][j] == PLAYER) {
 
+                jugador.y = i;
+                jugador.x = j;
+            }
+        }
+    }
+
+	// Bucle principal del juego. El jugador puede moverse por el mapa usando las teclas W, A, S, D. Después de cada movimiento, se actualiza el mapa y se muestra al jugador.
+    while (true)
+    {
+        mostrarMapa();
+
+        std::cin >> entrada;
+
+        jugador.moverJugador(entrada, mapa);
+
+        guardarMapa();
+    }
 }

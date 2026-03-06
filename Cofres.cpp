@@ -4,12 +4,13 @@
 #include <cstdlib>
 #include <ctime>
 
+// Cargar los items disponibles en el juego desde un archivo de texto. Cada línea del archivo debe contener el nombre del item y su bonificación.
 std::vector<std::pair<std::string, float>> cargarItems() {
 
     std::vector<std::pair<std::string, float>> items;
-    std::ifstream file("items.txt");
+    std::ifstream archivo("items.txt");
 
-    if (!file.is_open()) {
+    if (!archivo.is_open()) {
         std::cout << "Error al abrir items.txt\n";
         return items;
     }
@@ -17,31 +18,31 @@ std::vector<std::pair<std::string, float>> cargarItems() {
     std::string nombre;
     float bonus;
 
-    while (file >> nombre >> bonus) {
+    while (archivo >> nombre >> bonus) {
         items.push_back({ nombre, bonus });
     }
 
-    file.close();
+    archivo.close();
     return items;
 }
 
+// Función para abrir un cofre. El jugador recibe una cantidad aleatoria de oro y un item aleatorio que le otorga una bonificación en combate.
 void abrirCofre(Jugador& jugador) {
 
     std::cout << "\nHAS ABIERTO UN COFRE\n";
 
-	//oro aleatorio
-    int oroGanado = rand() % 91 + 10; // 10-100
+    int oroGanado = rand() % 91 + 10;
     jugador.oro += oroGanado;
 
     std::cout << "Has conseguido " << oroGanado << " de oro.\n";
 
-	//items aleatorios
     std::vector<std::pair<std::string, float>> items = cargarItems();
 
     if (items.empty()) {
         std::cout << "No hay items disponibles.\n";
         return;
     }
+
     int indice = rand() % items.size();
 
     std::string nombreItem = items[indice].first;
@@ -50,6 +51,5 @@ void abrirCofre(Jugador& jugador) {
     jugador.bonificacion += bonusItem;
 
     std::cout << "Has conseguido el objeto: " << nombreItem << "\n";
-    std::cout << "Bonificacion de combate +"
-        << bonusItem * 100 << "%\n";
+    std::cout << "Bonificacion de combate +" << bonusItem * 100 << "%\n";
 }
