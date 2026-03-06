@@ -16,6 +16,9 @@ char entrada;
 bool choice;
 
 Jugador jugador;
+
+//100% sinceridad, son las 11:20, y no me quiero arriesgar a romperlo todo metiendo esto en un cpp. Asi que he buscado en google como hacer esto: 
+#pragma region funciones_de_mapa
 void baseMapa() {
     std::ifstream archivo("mapaBase.txt");
 
@@ -34,7 +37,7 @@ void baseMapa() {
 // Cargar el mapa desde un archivo de texto.
 void cargarMapa() {
 
-    std::ifstream archivo("mapa.txt");
+    std::ifstream archivo("mapa.bin", std::ios::binary);
 
     if (!archivo.is_open()) {
         std::cout << "No se pudo abrir el archivo\n";
@@ -42,10 +45,19 @@ void cargarMapa() {
     }
     else {
 
-        while (getline(archivo, linea)) {
-            mapa.push_back(std::vector<char>(linea.begin(), linea.end()));
+        size_t filas, columnas;
+
+        archivo.read(reinterpret_cast<char*>(&filas), sizeof(size_t));
+        archivo.read(reinterpret_cast<char*>(&columnas), sizeof(size_t));
+
+        mapa.resize(filas, std::vector<char>(columnas));
+
+        for (size_t i = 0; i < filas; i++)
+        {
+            archivo.read(reinterpret_cast<char*>(mapa[i].data()), columnas);
         }
     }
+
     archivo.close();
 
     jugadorItems(jugador);
@@ -53,22 +65,25 @@ void cargarMapa() {
 
 // Guardar el mapa actualizado en el archivo de texto después de cada movimiento del jugador.
 void guardarMapa() {
+    std::ofstream archivo("mapa.bin", std::ios::binary);
 
-    std::ofstream archivo("mapa.txt");
     if (!archivo.is_open()) {
         std::cout << "No se pudo abrir el archivo\n";
         exit(0);
     }
     else {
-        for (size_t i = 0; i < mapa.size(); i++)
-        {
-            for (size_t j = 0; j < mapa[i].size(); j++)
-            {
-                archivo << mapa[i][j];
-            }
 
-            archivo << "\n";
+        size_t filas = mapa.size();
+        size_t columnas = mapa[0].size();
+
+        archivo.write(reinterpret_cast<char*>(&filas), sizeof(size_t));
+        archivo.write(reinterpret_cast<char*>(&columnas), sizeof(size_t));
+
+        for (size_t i = 0; i < filas; i++)
+        {
+            archivo.write(reinterpret_cast<char*>(mapa[i].data()), columnas);
         }
+
         archivo.close();
     }
 
@@ -89,6 +104,8 @@ void mostrarMapa() {
         std::cout << std::endl;
     }
 }
+#pragma endregion funciones_de_mapa
+//sorry marti
 
 int main()
 {

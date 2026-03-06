@@ -58,22 +58,36 @@ void abrirCofre(Jugador& jugador) {
 //funcion de guardado de items
 void guardarItems(Jugador& jugador) {
     std::ofstream inventario;
-    inventario.open("inventario.txt");
-    inventario << jugador.bonificacion << std::endl << jugador.oro;
+    inventario.open("inventario.bin", std::ios::binary);
+
+    if (!inventario.is_open()) {
+        std::cout << "No se pudo abrir el archivo\n";
+        exit(0);
+    }
+
+    inventario.write(reinterpret_cast<char*>(&jugador.bonificacion), sizeof(float));
+    inventario.write(reinterpret_cast<char*>(&jugador.oro), sizeof(int));
+
     inventario.close();
 }
 
 void jugadorItems(Jugador& jugador) {
     std::ifstream inventario;
-    inventario.open("inventario.txt");
-    
-    int oro;
-    float porcentaje;
+    inventario.open("inventario.bin", std::ios::binary);
 
-    if (inventario >> porcentaje >> oro) {
-        jugador.bonificacion = porcentaje;
-        jugador.oro = oro;
+    if (!inventario.is_open()) {
+        std::cout << "No se pudo abrir el archivo\n";
+        exit(0);
     }
+
+    float porcentaje;
+    int oro;
+
+    inventario.read(reinterpret_cast<char*>(&porcentaje), sizeof(float));
+    inventario.read(reinterpret_cast<char*>(&oro), sizeof(int));
+
+    jugador.bonificacion = porcentaje;
+    jugador.oro = oro;
 
     inventario.close();
 }
